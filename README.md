@@ -8,7 +8,9 @@
 
 
 | Nombre |Cantidad |Componente |
+|------|------|
 |U1|1|Arduino Uno R3|
+|------|------|
 | D1 | 1 | Rojo LED |
 
 Nombre	Cantidad	Componente
