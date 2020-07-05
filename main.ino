@@ -1,39 +1,48 @@
 #include <Servo.h>
 
-long readUltrasonicDistance(int triggerPin, int echoPin)
+#define PIN_LED_RED 13
+#define PIN_LED_GREEN 12
+#define PIN_SERVO 8
+#define PIN_ULTRASOUND_SENSOR 10
+#define SENSOR_TIMEOUT 500
+
+Servo servo;
+
+long readUltrasonicDistance(int pin)
 {
-  pinMode(triggerPin, OUTPUT);  // Clear the trigger
-  digitalWrite(triggerPin, LOW);
+  pinMode(pin, OUTPUT);
+
+  digitalWrite(pin, LOW);
   delayMicroseconds(2);
 
-  digitalWrite(triggerPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(triggerPin, LOW);
-  pinMode(echoPin, INPUT);
+  digitalWrite(pin, HIGH);
+  delayMicroseconds(PIN_ULTRASOUND_SENSOR);
 
-  return pulseIn(echoPin, HIGH);
+  digitalWrite(pin, LOW);
+
+  pinMode(pin, INPUT);
+
+  return pulseIn(pin, HIGH, SENSOR_TIMEOUT);
 }
-
-Servo servo_8;
 
 void setup()
 {
-  pinMode(13, OUTPUT);
-  servo_8.attach(8);
+  servo.attach(PIN_SERVO);
 
-  pinMode(12, OUTPUT);
+  pinMode(PIN_LED_RED, OUTPUT);
+  pinMode(PIN_LED_GREEN, OUTPUT);
 }
 
 void loop()
 {
-  if (0.01723 * readUltrasonicDistance(10, 10) < 100) {
-    digitalWrite(13, HIGH);
-    servo_8.write(90);
-    digitalWrite(12, LOW);
+  if (readUltrasonicDistance(PIN_ULTRASOUND_SENSOR) > SENSOR_TIMEOUT * 0.9) {
+    digitalWrite(PIN_LED_RED, HIGH);
+    servo.write(90);
+    digitalWrite(PIN_LED_GREEN, LOW);
   } else {
-    digitalWrite(13, LOW);
-    servo_8.write(0);
-    digitalWrite(12, HIGH);
+    digitalWrite(PIN_LED_RED, LOW);
+    servo.write(0);
+    digitalWrite(PIN_LED_GREEN, HIGH);
   }
-  delay(10); // Delay a little bit to improve simulation performance
+  delay(10);
 }
